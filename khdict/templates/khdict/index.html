@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Khmer Dictionary</title>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <script src="//cdn.jsdelivr.net/semantic-ui/0.18.0/javascript/semantic.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/semantic-ui/0.18.0/css/semantic.min.css">
+    <style type="text/css">
+        #title {
+            font-size: 24pt;
+        }
+        .entry {
+            padding-left: 2em;
+        }
+        .keyword {
+            color: blue;
+        }
+        .keyword:hover {
+            color: orange;
+        }
+    </style>
+    <script type="text/javascript">
+        $(function(){
+            $("#submit").click(function(){
+                var key=$("#key").val();
+                document.location.hash="#"+key;
+                $.get(
+                    '/q/'+encodeURIComponent(key),
+                    {},
+                    function(data){
+                        $("#content").empty();
+                        for(var i in data){
+                            var entry = data[i];
+                            var $dat=$("#template").clone();
+                            $dat.find("#title").text(key);
+                            $dat.find("#class").text(entry.class);
+                            $dat.find("#pronounce").text(entry.pronounce);
+                            $dat.find("#definition").html(entry.definition.replace(/`([^~]*)~/g, "<a class=\"keyword\">$1</a>"));
+                            $("#content").append($dat);
+                            $dat.show();
+                        }
+                        $(".keyword").click(function(){
+                            $("#key").val($(this).text());
+                            $("#submit").click();
+                        });
+                    },
+                    "json"
+                );
+            });
+            var hash=decodeURIComponent(document.location.hash.replace(/^#/,""));
+            if(hash!=""){
+                $("#key").val(hash);
+                $("#submit").click();
+            }
+        });
+    </script>
+</head>
+<body>
+<input type="text" id="key" /><input type="submit" id="submit" />
+<div id="title"></div>
+<div id="template" class="entry" style="display:none">
+    <div id="title"></div>
+    Class<div id="class"></div>
+    Pronounce<div id="pronounce"></div>
+    Definition<div id="definition"></div>
+    Source<div id="source"></div>
+    Alias<div id="alias"></div>
+    Ingredient<div id="ingredient"></div>
+</div>
+<div id="content"></div>
+</body>
+</html>
