@@ -4,7 +4,7 @@ import json
 
 def query(request, key):
     d=json.loads(open('/home/buganini/www/khdict/khdict.json').read())
-    return HttpResponse(json.dumps(d.get(key, {})), mimetype="application/json")
+    return HttpResponse(json.dumps(d.get(key, {})), content_type="application/json")
 
 def index(request):
     return render(request, "khdict/index.html")
